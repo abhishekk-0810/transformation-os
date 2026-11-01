@@ -1003,10 +1003,614 @@ class="page">
 
 <script>
 
-/*
-PART 3 JAVASCRIPT
-WILL GO HERE
-*/
+/* --------------------------
+   PAGE NAVIGATION
+-------------------------- */
+
+function showPage(pageId){
+
+document
+.querySelectorAll(".page")
+.forEach(page => {
+page.classList.remove("active");
+});
+
+document
+.getElementById(pageId)
+.classList.add("active");
+
+}
+
+/* --------------------------
+   ROADMAP DATA
+-------------------------- */
+
+const roadmap = [
+
+["Push","10K Steps","Reel"],
+["Pull","5K Run","Reel"],
+["Legs","10K Steps","Reel"],
+["Push","Sprint Session","Reel"],
+["Pull","5K Run","Reel"],
+["Legs","10K Steps","Reel"],
+["Recovery","Walk + Stretch","Story"],
+
+["Push","10K Steps","Reel"],
+["Pull","5K Run","Reel"],
+["Legs","10K Steps","Reel"],
+["Push","Sprint Session","Reel"],
+["Pull","5K Run","Reel"],
+["Legs","10K Steps","Reel"],
+["Recovery","Progress Photos","Story"],
+
+["Push","10K Steps","Reel"],
+["Pull","5K Run","Reel"],
+["Legs","10K Steps","Reel"],
+["Push","Sprint Session","Reel"],
+["Pull","5K Run","Reel"],
+["Legs","10K Steps","Reel"],
+["Recovery","Weight Check","Story"],
+
+["Push","10K Steps","Reel"],
+["Pull","5K Run","Reel"],
+["Legs","10K Steps","Reel"],
+["Push","Sprint Session","Reel"],
+["Pull","5K Run","Reel"],
+["Legs","10K Steps","Reel"],
+["Recovery","Photos + Mobility","Story"],
+
+["Upper Body","10K Steps","Reel"],
+["Full Body","5K Celebration Run","Transformation Video"]
+
+];
+
+/* --------------------------
+   FREEZE SETUP
+-------------------------- */
+
+if(localStorage.getItem("freezeCount")===null){
+
+localStorage.setItem(
+"freezeCount",
+1
+);
+
+}
+
+if(localStorage.getItem("freezeHistory")===null){
+
+localStorage.setItem(
+"freezeHistory",
+JSON.stringify([])
+);
+
+}
+
+/* --------------------------
+   CREATE ROADMAP
+-------------------------- */
+
+function loadRoadmap(){
+
+const body =
+document.getElementById(
+"roadmapBody"
+);
+
+body.innerHTML = "";
+
+roadmap.forEach((item,index)=>{
+
+const day =
+index + 1;
+
+let state =
+localStorage.getItem(
+"roadmap_day_" + day
+);
+
+let rowClass="";
+
+if(state==="true"){
+rowClass="roadmap-complete";
+}
+
+if(state==="freeze"){
+rowClass="freeze-day";
+}
+
+body.innerHTML += `
+
+<tr class="${rowClass}">
+
+<td>
+
+${
+state === "freeze"
+
+?
+
+"🧊"
+
+:
+
+`<input
+type="checkbox"
+${state==="true"?"checked":""}
+onchange="
+toggleRoadmap(
+${day},
+this
+)
+">`
+}
+
+</td>
+
+<td>Day ${day}</td>
+
+<td>${item[0]}</td>
+
+<td>${item[1]}</td>
+
+<td>${item[2]}</td>
+
+</tr>
+
+`;
+
+});
+
+updateStats();
+
+}
+
+/* --------------------------
+   ROADMAP UPDATE
+-------------------------- */
+
+function toggleRoadmap(
+day,
+checkbox
+){
+
+localStorage.setItem(
+"roadmap_day_"+day,
+checkbox.checked
+);
+
+loadRoadmap();
+
+}
+
+/* --------------------------
+   STREAK SYSTEM
+-------------------------- */
+
+function calculateStreak(){
+
+let streak = 0;
+
+for(
+let i = 1;
+i <= 30;
+i++
+){
+
+let state =
+localStorage.getItem(
+"roadmap_day_"+i
+);
+
+if(
+state==="true"
+||
+state==="freeze"
+){
+
+streak++;
+
+}else{
+
+break;
+
+}
+
+}
+
+return streak;
+
+}
+
+/* --------------------------
+   PROGRESS UPDATE
+-------------------------- */
+
+function updateStats(){
+
+let completed = 0;
+
+for(
+let i=1;
+i<=30;
+i++
+){
+
+let state =
+localStorage.getItem(
+"roadmap_day_"+i
+);
+
+if(
+state==="true"
+||
+state==="freeze"
+){
+
+completed++;
+
+}
+
+}
+
+let percent =
+Math.round(
+(completed/30)*100
+);
+
+document
+.getElementById(
+"completedDays"
+)
+.innerHTML =
+completed +
+" / 30 Days";
+
+document
+.getElementById(
+"percent"
+)
+.innerHTML =
+percent + "%";
+
+document
+.getElementById(
+"bar"
+)
+.style.width =
+percent + "%";
+
+let streak =
+calculateStreak();
+
+document
+.getElementById(
+"streak"
+)
+.innerHTML =
+streak +
+" Days";
+
+/* BADGES */
+
+let badge =
+"🌱 Beginner";
+
+if(streak >= 7){
+badge =
+"🔥 Consistent";
+}
+
+if(streak >= 14){
+badge =
+"⚡ Disciplined";
+}
+
+if(streak >= 21){
+badge =
+"🏆 Elite";
+}
+
+if(streak >= 30){
+badge =
+"👑 Transformation Master";
+}
+
+document
+.getElementById(
+"badge"
+)
+.innerHTML =
+badge;
+
+/* MOTIVATION */
+
+let msg =
+"🚀 Start your journey.";
+
+if(percent >= 10){
+msg =
+"💪 Momentum is building.";
+}
+
+if(percent >= 25){
+msg =
+"🔥 Consistency beats motivation.";
+}
+
+if(percent >= 50){
+msg =
+"⚡ Halfway there.";
+}
+
+if(percent >= 75){
+msg =
+"🏆 Elite consistency.";
+}
+
+if(percent >= 100){
+msg =
+"👑 Transformation Complete!";
+}
+
+document
+.getElementById(
+"progressMessage"
+)
+.innerHTML =
+msg;
+
+}
+
+/* --------------------------
+   FREEZE SYSTEM
+-------------------------- */
+
+function useFreeze(){
+
+let count =
+parseInt(
+localStorage.getItem(
+"freezeCount"
+)
+);
+
+if(count <= 0){
+
+alert(
+"No freeze available."
+);
+
+return;
+
+}
+
+let day =
+prompt(
+"Enter day (1-30)"
+);
+
+if(!day){
+return;
+}
+
+day =
+parseInt(day);
+
+if(
+day < 1
+||
+day > 30
+){
+
+alert(
+"Invalid day"
+);
+
+return;
+
+}
+
+localStorage.setItem(
+"roadmap_day_"+day,
+"freeze"
+);
+
+count--;
+
+localStorage.setItem(
+"freezeCount",
+count
+);
+
+let history =
+JSON.parse(
+localStorage.getItem(
+"freezeHistory"
+)
+);
+
+history.push({
+
+day:day,
+
+date:
+new Date()
+.toLocaleDateString(),
+
+time:
+new Date()
+.toLocaleTimeString()
+
+});
+
+localStorage.setItem(
+"freezeHistory",
+JSON.stringify(
+history
+)
+);
+
+loadFreezeHistory();
+
+document
+.getElementById(
+"freezeCount"
+)
+.innerHTML =
+count +
+" Available";
+
+loadRoadmap();
+
+}
+
+/* --------------------------
+   FREEZE HISTORY
+-------------------------- */
+
+function loadFreezeHistory(){
+
+let history =
+JSON.parse(
+localStorage.getItem(
+"freezeHistory"
+)
+);
+
+let div =
+document.getElementById(
+"freezeHistory"
+);
+
+if(history.length===0){
+
+div.innerHTML =
+"No freezes used.";
+
+return;
+
+}
+
+div.innerHTML="";
+
+history.forEach(item=>{
+
+div.innerHTML +=
+
+`
+
+<div class="history-item">
+
+🧊 Day ${item.day}
+
+<br>
+
+📅 ${item.date}
+
+<br>
+
+⏰ ${item.time}
+
+</div>
+
+`;
+
+});
+
+}
+
+/* --------------------------
+   TODAY'S MISSION
+-------------------------- */
+
+const weeklySchedule = [
+
+{
+workout:"Push Day",
+focus:"Chest • Shoulders • Triceps",
+run:"10K Steps"
+},
+
+{
+workout:"Pull Day",
+focus:"Back • Biceps",
+run:"5K Run"
+},
+
+{
+workout:"Leg Day",
+focus:"Quads • Hamstrings • Calves",
+run:"10K Steps"
+},
+
+{
+workout:"Push Day",
+focus:"Chest • Shoulders",
+run:"Sprint Session"
+},
+
+{
+workout:"Pull Day",
+focus:"Back • Biceps",
+run:"5K Run"
+},
+
+{
+workout:"Leg Day",
+focus:"Full Lower Body",
+run:"10K Steps"
+},
+
+{
+workout:"Recovery Day",
+focus:"Mobility + Stretching",
+run:"Walking"
+}
+
+];
+
+const today =
+(new Date().getDate()-1)%7;
+
+document
+.getElementById(
+"workoutText"
+)
+.innerHTML =
+weeklySchedule[today].workout;
+
+document
+.getElementById(
+"focusText"
+)
+.innerHTML =
+weeklySchedule[today].focus;
+
+document
+.getElementById(
+"runText"
+)
+.innerHTML =
+weeklySchedule[today].run;
+
+/* --------------------------
+   START APP
+-------------------------- */
+
+document
+.getElementById(
+"freezeCount"
+)
+.innerHTML =
+localStorage.getItem(
+"freezeCount"
+)
++ " Available";
+
+loadFreezeHistory();
+
+loadRoadmap();
 
 </script>
 
