@@ -491,6 +491,34 @@ class="bar">
 <div class="card">
 
 <h2>
+🏆 Discipline Score
+</h2>
+
+<p id="disciplineScore">
+0/100
+</p>
+
+</div>
+<!-- XP CARD -->
+
+<div class="card">
+
+<h2>
+⭐ Experience
+</h2>
+
+<p id="xpPoints">
+0 XP
+</p>
+
+<p id="levelNumber">
+Level 1
+</p>
+
+</div>
+<div class="card">
+
+<h2>
 🧊 Freeze System
 </h2>
 
@@ -903,6 +931,25 @@ placeholder="Thighs">
 
 </div>
 
+<div class="card">
+
+<h2>
+💾 Backup Center
+</h2>
+
+<button onclick="exportData()">
+
+📤 Export Progress Backup
+
+</button>
+
+<br><br>
+
+<input
+type="file"
+onchange="importData(event)">
+
+</div>
 </section>
 
 <!-- GALLERY -->
@@ -1611,6 +1658,906 @@ localStorage.getItem(
 loadFreezeHistory();
 
 loadRoadmap();
+
+/* ==========================
+   WEIGHT AUTO SAVE
+========================== */
+
+document
+.querySelectorAll(
+"#progress input"
+)
+.forEach((input,index)=>{
+
+let key =
+"progress_input_"+index;
+
+input.value =
+localStorage.getItem(key) || "";
+
+input.addEventListener(
+"input",
+()=>{
+
+localStorage.setItem(
+key,
+input.value
+);
+
+updateDisciplineScore();
+
+});
+
+});
+
+/* ==========================
+   DISCIPLINE SCORE
+========================== */
+
+function updateDisciplineScore(){
+
+let completed = 0;
+
+let total = 30;
+
+for(
+let i=1;
+i<=30;
+i++
+){
+
+let state =
+localStorage.getItem(
+"roadmap_day_"+i
+);
+
+if(
+state==="true"
+||
+state==="freeze"
+){
+
+completed++;
+
+}
+
+}
+
+let score =
+Math.round(
+(completed/30)*100
+);
+
+let scoreDiv =
+document.getElementById(
+"disciplineScore"
+);
+
+if(scoreDiv){
+
+scoreDiv.innerHTML =
+score + "/100";
+
+}
+
+}
+
+/* ==========================
+   ACHIEVEMENTS
+========================== */
+
+function unlockAchievements(){
+
+const achievements =
+document.querySelectorAll(
+"#achievements .goal"
+);
+
+let streak =
+calculateStreak();
+
+if(streak >= 1){
+
+achievements[0].style.color =
+"#00ff88";
+
+}
+
+if(streak >= 2){
+
+achievements[1].style.color =
+"#00ff88";
+
+}
+
+if(streak >= 3){
+
+achievements[2].style.color =
+"#00ff88";
+
+}
+
+if(streak >= 7){
+
+achievements[3].style.color =
+"#00ff88";
+
+}
+
+if(streak >= 14){
+
+achievements[4].style.color =
+"#00ff88";
+
+}
+
+if(streak >= 21){
+
+achievements[5].style.color =
+"#00ff88";
+
+}
+
+if(streak >= 30){
+
+achievements[6].style.color =
+"#ffd700";
+
+}
+
+}
+
+/* ==========================
+   EXPORT DATA
+========================== */
+
+function exportData(){
+
+const data = {
+
+freezeCount:
+localStorage.getItem(
+"freezeCount"
+),
+
+freezeHistory:
+JSON.parse(
+localStorage.getItem(
+"freezeHistory"
+)
+|| "[]"
+),
+
+roadmap:{}
+
+};
+
+for(
+let i=1;
+i<=30;
+i++
+){
+
+data.roadmap[
+"day_"+i
+] =
+localStorage.getItem(
+"roadmap_day_"+i
+);
+
+}
+
+const blob =
+new Blob(
+
+[
+JSON.stringify(
+data,
+null,
+2
+)
+],
+
+{
+type:"application/json"
+}
+
+);
+
+const a =
+document.createElement("a");
+
+a.href =
+URL.createObjectURL(blob);
+
+a.download =
+"TransformationOS_Backup.json";
+
+a.click();
+
+}
+
+/* ==========================
+   IMPORT DATA
+========================== */
+
+function importData(event){
+
+const file =
+event.target.files[0];
+
+if(!file)
+return;
+
+const reader =
+new FileReader();
+
+reader.onload =
+function(e){
+
+const data =
+JSON.parse(
+e.target.result
+);
+
+localStorage.setItem(
+"freezeCount",
+data.freezeCount
+);
+
+localStorage.setItem(
+"freezeHistory",
+JSON.stringify(
+data.freezeHistory
+)
+);
+
+for(
+let i=1;
+i<=30;
+i++
+){
+
+localStorage.setItem(
+
+"roadmap_day_"+i,
+
+data.roadmap[
+"day_"+i
+]
+
+);
+
+}
+
+loadRoadmap();
+
+loadFreezeHistory();
+
+};
+
+reader.readAsText(
+file
+);
+
+}
+
+/* ==========================
+   GALLERY UPLOAD
+========================== */
+
+function saveGalleryImage(
+fileInput,
+day
+){
+
+const file =
+fileInput.files[0];
+
+if(!file) return;
+
+const reader =
+new FileReader();
+
+reader.onload =
+function(e){
+
+localStorage.setItem(
+"gallery_day_"+day,
+e.target.result
+);
+
+displayGallery();
+
+};
+
+reader.readAsDataURL(
+file
+);
+
+}
+
+function displayGallery(){
+
+for(
+let day of
+[1,7,14,21,30]
+){
+
+let image =
+localStorage.getItem(
+"gallery_day_"+day
+);
+
+let img =
+document.getElementById(
+"galleryPreview_"+day
+);
+
+if(
+img &&
+image
+){
+
+img.src =
+image;
+
+}
+
+}
+
+}
+
+/* ==========================
+   RUN COUNTERS
+========================== */
+
+function updateRunCounters(){
+
+let runs = 0;
+
+let sprints = 0;
+
+for(
+let i=1;
+i<=30;
+i++
+){
+
+let row =
+roadmap[i-1];
+
+let state =
+localStorage.getItem(
+"roadmap_day_"+i
+);
+
+if(
+state==="true"
+||
+state==="freeze"
+){
+
+if(
+row[1]
+.includes("5K")
+){
+runs++;
+}
+
+if(
+row[1]
+.includes("Sprint")
+){
+sprints++;
+}
+
+}
+
+}
+
+let runCount =
+document.getElementById(
+"runCount"
+);
+
+if(runCount)
+runCount.innerHTML =
+runs + " / 8";
+
+let sprintCount =
+document.getElementById(
+"sprintCount"
+);
+
+if(sprintCount)
+sprintCount.innerHTML =
+sprints + " / 4";
+
+}
+
+/* ==========================
+   INIT
+========================== */
+
+displayGallery();
+
+updateRunCounters();
+
+unlockAchievements();
+
+updateDisciplineScore();
+
+/* ==========================
+   XP SYSTEM
+========================== */
+
+function calculateXP(){
+
+let xp = 0;
+
+for(let i=1;i<=30;i++){
+
+let state =
+localStorage.getItem(
+"roadmap_day_"+i
+);
+
+if(
+state==="true" ||
+state==="freeze"
+){
+
+xp += 100;
+
+}
+
+}
+
+return xp;
+
+}
+
+/* ==========================
+   LEVEL SYSTEM
+========================== */
+
+function calculateLevel(){
+
+let xp =
+calculateXP();
+
+let level =
+Math.floor(
+xp / 500
+) + 1;
+
+return level;
+
+}
+
+function updateXPCard(){
+
+let xp =
+calculateXP();
+
+let level =
+calculateLevel();
+
+let xpElement =
+document.getElementById(
+"xpPoints"
+);
+
+if(xpElement){
+
+xpElement.innerHTML =
+xp + " XP";
+
+}
+
+let levelElement =
+document.getElementById(
+"levelNumber"
+);
+
+if(levelElement){
+
+levelElement.innerHTML =
+"Level " + level;
+
+}
+
+}
+
+/* ==========================
+   WEEKLY FREEZE RESET
+========================== */
+
+function checkWeeklyFreezeReset(){
+
+let currentWeek =
+Math.floor(
+new Date().getDate() / 7
+);
+
+let savedWeek =
+localStorage.getItem(
+"freezeWeek"
+);
+
+if(savedWeek===null){
+
+localStorage.setItem(
+"freezeWeek",
+currentWeek
+);
+
+return;
+
+}
+
+if(savedWeek != currentWeek){
+
+localStorage.setItem(
+"freezeWeek",
+currentWeek
+);
+
+localStorage.setItem(
+"freezeCount",
+1
+);
+
+document
+.getElementById(
+"freezeCount"
+)
+.innerHTML =
+"1 Available";
+
+}
+
+}
+
+/* ==========================
+   ACHIEVEMENT POPUPS
+========================== */
+
+function showAchievement(text){
+
+let popup =
+document.createElement("div");
+
+popup.style.position="fixed";
+
+popup.style.top="30px";
+
+popup.style.right="30px";
+
+popup.style.padding="20px";
+
+popup.style.background="#d4af37";
+
+popup.style.color="#000";
+
+popup.style.fontWeight="bold";
+
+popup.style.borderRadius="12px";
+
+popup.style.zIndex="9999";
+
+popup.innerHTML =
+"🏆 " + text;
+
+document.body.appendChild(
+popup
+);
+
+setTimeout(()=>{
+
+popup.remove();
+
+},3000);
+
+}
+
+/* ==========================
+   ACHIEVEMENT TRACKER
+========================== */
+
+function checkAchievements(){
+
+let streak =
+calculateStreak();
+
+if(
+streak===7 &&
+!localStorage.getItem(
+"achievement_7"
+)
+){
+
+showAchievement(
+"7 Day Streak Unlocked!"
+);
+
+localStorage.setItem(
+"achievement_7",
+true
+);
+
+}
+
+if(
+streak===14 &&
+!localStorage.getItem(
+"achievement_14"
+)
+){
+
+showAchievement(
+"14 Day Streak Unlocked!"
+);
+
+localStorage.setItem(
+"achievement_14",
+true
+);
+
+}
+
+if(
+streak===21 &&
+!localStorage.getItem(
+"achievement_21"
+)
+){
+
+showAchievement(
+"21 Day Streak Unlocked!"
+);
+
+localStorage.setItem(
+"achievement_21",
+true
+);
+
+}
+
+if(
+streak===30 &&
+!localStorage.getItem(
+"achievement_30"
+)
+){
+
+showAchievement(
+"Transformation Master!"
+);
+
+localStorage.setItem(
+"achievement_30",
+true
+);
+
+}
+
+}
+
+/* ==========================
+   RUN TRACKER
+========================== */
+
+function getRunStats(){
+
+let runCount = 0;
+
+let sprintCount = 0;
+
+for(let i=1;i<=30;i++){
+
+let state =
+localStorage.getItem(
+"roadmap_day_"+i
+);
+
+if(
+state==="true" ||
+state==="freeze"
+){
+
+if(
+roadmap[i-1][1]
+.includes("5K")
+){
+
+runCount++;
+
+}
+
+if(
+roadmap[i-1][1]
+.includes("Sprint")
+){
+
+sprintCount++;
+
+}
+
+}
+
+}
+
+if(
+document.getElementById(
+"runCount"
+)
+){
+
+document
+.getElementById(
+"runCount"
+)
+.innerHTML =
+runCount +
+" / 8";
+
+}
+
+if(
+document.getElementById(
+"sprintCount"
+)
+){
+
+document
+.getElementById(
+"sprintCount"
+)
+.innerHTML =
+sprintCount +
+" / 4";
+
+}
+
+}
+
+/* ==========================
+   TRANSFORMATION %
+========================== */
+
+function getTransformationScore(){
+
+let complete = 0;
+
+for(let i=1;i<=30;i++){
+
+let state =
+localStorage.getItem(
+"roadmap_day_"+i
+);
+
+if(
+state==="true" ||
+state==="freeze"
+){
+
+complete++;
+
+}
+
+}
+
+return Math.round(
+(complete/30)*100
+);
+
+}
+
+/* ==========================
+   TRANSFORMATION TITLE
+========================== */
+
+function updateTransformationRank(){
+
+let score =
+getTransformationScore();
+
+let rank =
+"🌱 Beginner";
+
+if(score>=25)
+rank =
+"🔥 Consistent";
+
+if(score>=50)
+rank =
+"💪 Disciplined";
+
+if(score>=75)
+rank =
+"⚡ Elite";
+
+if(score>=100)
+rank =
+"👑 Transformation Master";
+
+let rankDiv =
+document.getElementById(
+"transformationRank"
+);
+
+if(rankDiv){
+
+rankDiv.innerHTML =
+rank;
+
+}
+
+}
+
+/* ==========================
+   DAILY QUOTE
+========================== */
+
+const quotes = [
+
+"Discipline beats motivation.",
+
+"Show up even when you don't feel like it.",
+
+"Small wins create big transformations.",
+
+"One workout won't change your life. Repetition will.",
+
+"Your future self is watching.",
+
+"Nobody is coming to save you.",
+
+"Earn your confidence."
+
+];
+
+function loadDailyQuote(){
+
+let day =
+new Date().getDate();
+
+let quote =
+quotes[
+day % quotes.length
+];
+
+let quoteDiv =
+document.getElementById(
+"dailyQuote"
+);
+
+if(quoteDiv){
+
+quoteDiv.innerHTML =
+quote;
+
+}
+
+}
+
+/* ==========================
+   APP STARTUP
+========================== */
+
+checkWeeklyFreezeReset();
+
+updateXPCard();
+
+checkAchievements();
+
+getRunStats();
+
+updateTransformationRank();
+
+loadDailyQuote();
 
 </script>
 
