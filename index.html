@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+🏆 Transformation OS
+</title>
+
+<style>
+
+/* PART 2 CSS WILL GO HERE */
+
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVIGATION -->
+
+<nav>
+
+<button onclick="showPage('dashboard')">
+🏠 Dashboard
+</button>
+
+<button onclick="showPage('goals')">
+🎯 Goals
+</button>
+
+<button onclick="showPage('today')">
+📅 Today
+</button>
+
+<button onclick="showPage('running')">
+🏃 Running
+</button>
+
+<button onclick="showPage('creator')">
+🎥 Creator
+</button>
+
+<button onclick="showPage('progress')">
+📈 Progress
+</button>
+
+<button onclick="showPage('gallery')">
+📸 Gallery
+</button>
+
+<button onclick="showPage('achievements')">
+🏆 Achievements
+</button>
+
+</nav>
+
+<!-- DASHBOARD -->
+
+<section
+id="dashboard"
+class="page active">
+
+<h1>
+🏆 TRANSFORMATION OS
+</h1>
+
+<p>
+
+Nobody is coming to save you.
+
+Become the strongest version
+of yourself.
+
+</p>
+
+<div class="card">
+
+<h2>
+📈 Transformation Progress
+</h2>
+
+<p id="completedDays">
+0 / 30 Days
+</p>
+
+<div class="progress">
+
+<div
+id="bar"
+class="bar">
+</div>
+
+</div>
+
+<p id="percent">
+0%
+</p>
+
+<p id="progressMessage">
+🚀 Start your journey.
+</p>
+
+</div>
+
+<div class="card">
+
+<h2>
+🔥 Current Streak
+</h2>
+
+<p id="streak">
+0 Days
+</p>
+
+<div id="badge">
+🌱 Beginner
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>
+🧊 Freeze System
+</h2>
+
+<p id="freezeCount">
+1 Available
+</p>
+
+<button
+onclick="useFreeze()">
+
+Use Freeze
+
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>
+🧊 Freeze History
+</h2>
+
+<div id="freezeHistory">
+
+No freezes used.
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>
+🏆 30 DAY ROADMAP
+</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>✅</th>
+
+<th>Day</th>
+
+<th>Workout</th>
+
+<th>Cardio</th>
+
+<th>Content</th>
+
+</tr>
+
+</thead>
+
+<tbody id="roadmapBody">
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+<!-- GOALS -->
+
+<section
+id="goals"
+class="page">
+
+<h1>
+🎯 Monthly Goals
+</h1>
+
+<div class="goal">
+✅ 24 Strength Sessions
+</div>
+
+<div class="goal">
+✅ 8 Runs
+</div>
+
+<div class="goal">
+✅ 4 Sprint Sessions
+</div>
+
+<div class="goal">
+✅ 30 Reels
+</div>
+
+<div class="goal">
+✅ 30 Stories
+</div>
+
+<div class="goal">
+✅ Protein Daily
+</div>
+
+<div class="goal">
+✅ 3L Water Daily
+</div>
+
+<div class="goal">
+✅ 7+ Hours Sleep
+</div>
+
+</section>
+
+<!-- TODAY -->
+
+<section
+id="today"
+class="page">
+
+<h1>
+📅 Today's Mission
+</h1>
+
+<div class="card">
+
+<h2 id="workoutText">
+
+Push Day
+
+</h2>
+
+<p id="focusText">
+
+Chest • Shoulders • Triceps
+
+</p>
+
+<p id="runText">
+
+10K Steps
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h2>
+✅ Daily Checklist
+</h2>
+
+<table>
+
+<tr>
+
+<td>
+<input type="checkbox">
+</td>
+
+<td>
+🏋 Workout Completed
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+<input type="checkbox">
+</td>
+
+<td>
+🏃 Cardio Completed
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+<input type="checkbox">
+</td>
+
+<td>
+🚶 10K Steps
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+<input type="checkbox">
+</td>
+
+<td>
+🥩 Protein Goal Hit
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+<input type="checkbox">
+</td>
+
+<td>
+💧 3L Water
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+<input type="checkbox">
+</td>
+
+<td>
+😴 7+ Hours Sleep
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+<input type="checkbox">
+</td>
+
+<td>
+📚 Study 1 Hour
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+<input type="checkbox">
+</td>
+
+<td>
+📱 Story Posted
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+<input type="checkbox">
+</td>
+
+<td>
+🎥 Reel Posted
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+</section>
+
+<!-- RUNNING -->
+
+<section
+id="running"
+class="page">
+
+<h1>
+🏃 Running Center
+</h1>
+
+<div class="card">
+
+<h2>
+Weekly Plan
+</h2>
+
+<p>
+
+Tuesday → 5K Run
+
+</p>
+
+<p>
+
+Thursday → Sprint Session
+
+</p>
+
+<p>
+
+Saturday → 5K Run
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h2>
+Sprint Workout
+</h2>
+
+<p>
+10 min Warmup
+</p>
+
+<p>
+8 × 100m Sprint
+</p>
+
+<p>
+60 sec Rest
+</p>
+
+<p>
+10 min Cooldown
+</p>
+
+</div>
+
+</section>
+
+<!-- CREATOR -->
+
+<section
+id="creator"
+class="page">
+
+<h1>
+🎥 Creator Dashboard
+</h1>
+
+<div class="goal">
+☐ Gym Clip
+</div>
+
+<div class="goal">
+☐ Meal Clip
+</div>
+
+<div class="goal">
+☐ Lifestyle Clip
+</div>
+
+<div class="goal">
+☐ Voice Over
+</div>
+
+<div class="goal">
+☐ Story Posted
+</div>
+
+<div class="goal">
+☐ Reel Posted
+</div>
+
+</section>
+
+<!-- PROGRESS -->
+
+<section
+id="progress"
+class="page">
+
+<h1>
+📈 Progress Center
+</h1>
+
+<div class="card">
+
+<h2>
+Weight Logs
+</h2>
+
+<input
+placeholder="Week 1 Weight">
+
+<input
+placeholder="Week 2 Weight">
+
+<input
+placeholder="Week 3 Weight">
+
+<input
+placeholder="Week 4 Weight">
+
+</div>
+
+<div class="card">
+
+<h2>
+Body Measurements
+</h2>
+
+<input
+placeholder="Waist">
+
+<input
+placeholder="Chest">
+
+<input
+placeholder="Arms">
+
+<input
+placeholder="Thighs">
+
+</div>
+
+</section>
+
+<!-- GALLERY -->
+
+<section
+id="gallery"
+class="page">
+
+<h1>
+📸 Gallery
+</h1>
+
+<div class="card">
+
+Day 1
+
+<input type="file">
+
+</div>
+
+<div class="card">
+
+Day 7
+
+<input type="file">
+
+</div>
+
+<div class="card">
+
+Day 14
+
+<input type="file">
+
+</div>
+
+<div class="card">
+
+Day 21
+
+<input type="file">
+
+</div>
+
+<div class="card">
+
+Day 30
+
+<input type="file">
+
+</div>
+
+</section>
+
+<!-- ACHIEVEMENTS -->
+
+<section
+id="achievements"
+class="page">
+
+<h1>
+🏆 Achievements
+</h1>
+
+<div class="goal">
+🏅 First Workout
+</div>
+
+<div class="goal">
+🏅 First 5K Run
+</div>
+
+<div class="goal">
+🏅 First Sprint
+</div>
+
+<div class="goal">
+🏅 7 Day Streak
+</div>
+
+<div class="goal">
+🏅 14 Day Streak
+</div>
+
+<div class="goal">
+🏅 21 Day Streak
+</div>
+
+<div class="goal">
+🏅 30 Day Completion
+</div>
+
+<div class="goal">
+🏅 Content Machine
+</div>
+
+</section>
+
+<script>
+
+/*
+PART 3 JAVASCRIPT
+WILL GO HERE
+*/
+
+</script>
+
+</body>
+
+</html>
